@@ -28,6 +28,10 @@ const userSchema = new Schema({
     type: String,
     default: "user",
   },
+  user_premium: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.plugin(paginate);

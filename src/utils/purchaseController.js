@@ -1,6 +1,7 @@
 import CartManager from "../dao/managers_mongo/cartManagerMongo.js";
 import ProductManager from "../dao/managers_mongo/productManagerMongo.js";
 import { ticketModel } from "../dao/models/ticket.models.js";
+import { userModel } from "../dao/models/users.models.js";
 
 const cartManager = new CartManager();
 const productManager = new ProductManager();
@@ -18,20 +19,37 @@ const purchase = async (req, res) => {
         const prodBD = await productManager.getProductById(id);
 
         if (prod.quantity <= prodBD.stock) {
-          amount += prodBD.price * prod.quantity;
-          console.log(`Monto total: ${amount}`);
+          if (!req.user.user.user_premium) {
+            amount += prodBD.price * prod.quantity;
+            console.log(`Monto total: ${amount}`);
 
-          prodBD.stock -= prod.quantity;
-          await productManager.updateProduct(
-            id,
-            prodBD.title,
-            prodBD.description,
-            prodBD.stock,
-            prodBD.status,
-            prodBD.code,
-            prodBD.price,
-            prodBD.category
-          );
+            prodBD.stock -= prod.quantity;
+            await productManager.updateProduct(
+              id,
+              prodBD.title,
+              prodBD.description,
+              prodBD.stock,
+              prodBD.status,
+              prodBD.code,
+              prodBD.price,
+              prodBD.category
+            );
+          } else {
+            amount += prodBD.price * prod.quantity * 0.9;
+            console.log(`Monto total: ${amount}`);
+
+            prodBD.stock -= prod.quantity;
+            await productManager.updateProduct(
+              id,
+              prodBD.title,
+              prodBD.description,
+              prodBD.stock,
+              prodBD.status,
+              prodBD.code,
+              prodBD.price,
+              prodBD.category
+            );
+          }
         }
       }
 
