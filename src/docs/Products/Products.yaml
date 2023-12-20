@@ -1,0 +1,259 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Límite de productos a obtener
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Número de página
+        - in: query
+          name: sort
+          schema:
+            type: integer
+          description: Orden de los productos (1 para ascendente, -1 para descendente)
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Categoría de los productos
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "400":
+          description: Error en consultar productos
+    post:
+      summary: Crear un nuevo producto
+      security:
+        - jwt: []
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: Token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Error en crear productos
+  /api/products/{id}:
+    get:
+      summary: Obtener un producto por su ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Producto no encontrado
+        "400":
+          description: Error en la consulta del producto
+    put:
+      summary: Actualizar un producto dado su ID
+      tags:
+        - Products
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: Token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Producto actualizado
+        "404":
+          description: Producto no encontrado
+        "400":
+          description: Error en actualizar producto
+    delete:
+      summary: Borrar un producto de la colección, dado su ID
+      tags:
+        - Products
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: Token JWT
+      responses:
+        "200":
+          description: Producto eliminado
+        "404":
+          description: Producto no encontrado
+        "400":
+          description: Error en eliminar producto
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Agregar un producto al carrito
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: false
+          description: Token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "404":
+          description: Carrito no encontrado
+        "400":
+          description: Error en agregar producto al carrito
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del producto
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+        status:
+          type: boolean
+          description: Disponibilidad del producto
+        code:
+          type: string
+          description: Código del producto
+        thumbnails:
+          type: array
+          description: Array de imágenes del producto
+          items:
+            type: string
+      example:
+        _id: ksjdioja4646
+        title: "Café de Especialidad"
+        description: "Café de origen único, tostado medio, con notas de chocolate y frutos rojos."
+        price: 1500
+        stock: 400
+        category: "cafe"
+        status: true
+        code: "C15"
+        thumbnails: ["thumbnail1.jpg", "thumbnail2.jpg"]
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del carrito
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id_prod:
+                type: string
+                description: ID del producto
+              quantity:
+                type: integer
+                description: Cantidad del producto
+            required:
+              - id_prod
+              - quantity
+      example:
+        _id: shdaohqd5456463
+        products:
+          - id_prod: "60d21b126f675e15a44e1e48"
+            quantity: 2

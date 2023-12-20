@@ -1,0 +1,23 @@
+<h1>Lista de Productos</h1>
+
+<div
+  id="listaProductos"
+  class="row-gap-3 column-gap-3 d-flex flex-row justify-content-around align-content-around flex-wrap bg-primary"
+>
+  {{#each listaproductos.docs}}
+
+    <div class="card text-center mt-2 mb-2" style="width: 18rem">
+      <h2 class="card-title">{{this.title}}</h2>
+      <h4>Precio: ${{this.price}}</h4>
+      <h5>Categoría: {{this.category}}</h5>
+      <div class="border rounded-4">
+        <h4>Descripción:</h4>
+        <p class="card-text">{{this.description}}</p>
+      </div>
+      <h5 class="mt-2">Stock: {{this.stock}} || Código:{{this.code}}</h5>
+    </div>
+
+  {{/each}}
+</div>
+
+<script src="/socket.io/socket.io.js"></script>

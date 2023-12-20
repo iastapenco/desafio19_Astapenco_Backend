@@ -1,0 +1,39 @@
+<h1>Crear Nuevo Producto</h1>
+<form id="idForm">
+  <label for="title" class="form-label">Title</label>
+  <input type="text" required name="title" id="title" />
+  <label for="description" class="form-label">Description</label>
+  <input type="text" required name="description" id="description" />
+  <label for="category" class="form-label">Category</label>
+  <input type="text" required name="category" id="category" />
+  <label for="price" class="form-label">Price</label>
+  <input type="number" required name="price" id="price" />
+  <label for="stock" class="form-label">Stock</label>
+  <input type="number" required name="stock" id="stock" />
+  <label for="code" class="form-label">Code</label>
+  <input type="string" required name="code" id="code" />
+  <button type="submit" class="btn btn-primary btn-lg">Enviar</button>
+</form><br /><br />
+
+<h1>Lista de Productos</h1>
+
+<div
+  id="listaProductos"
+  class="row-gap-3 column-gap-3 d-flex flex-row justify-content-around align-content-around flex-wrap bg-primary"
+>
+  {{#each listaproductos.docs}}
+
+    <div class="card text-center mt-2 mb-2" style="width: 18rem">
+      <h2 class="card-title">{{this.title}}</h2>
+      <h4>Precio: ${{this.price}}</h4>
+      <h5>Categoría: {{this.category}}</h5>
+      <div class="border rounded-4">
+        <h4>Descripción:</h4>
+        <p class="card-text">{{this.description}}</p>
+      </div>
+      <h5 class="mt-2">Stock: {{this.stock}} || Código:{{this.code}}</h5>
+    </div>
+
+  {{/each}}
+</div>
+<script src="/socket.io/socket.io.js"></script>

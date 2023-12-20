@@ -1,0 +1,21 @@
+<h1>EL carrito con _id: {{cart._id}} tiene los siguientes productos:</h1>
+<ul id="cart-container" class="bg-primary" style="width: 24rem">
+
+  {{#each cart.products}}
+    <li class="card text-center mt-2 mb-2" style="width: 20rem">
+      <h3 class="card-title">Producto: {{this.id_prod.title}}</h3>
+      <h5>Precio: ${{this.id_prod.price}}</h5>
+      <h5>Categoría: {{this.id_prod.category}}</h5>
+      <div class="border rounded-4">
+        <h5>Descripción:</h5>
+        <p class="card-text">{{this.id_prod.description}}</p>
+      </div>
+      <h5 class="mt-2">Stock:
+        {{this.id_prod.stock}}
+        || Código:{{this.id_prod.code}}</h5>
+      <h3 id="quantity-quantity-{{@index}}">Cantidad: {{this.quantity}}</h3>
+
+    </li>
+  {{/each}}
+
+</ul>
