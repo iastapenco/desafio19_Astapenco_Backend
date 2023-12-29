@@ -1,0 +1,74 @@
+paths:
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Agregar un producto al carrito
+      tags:
+        - Carts
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del carrito
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "404":
+          description: Carrito no encontrado
+        "400":
+          description: Error en agregar producto al carrito
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectID
+          description: ID del carrito
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id_prod:
+                type: string
+                description: ID del producto
+              quantity:
+                type: integer
+                description: Cantidad del producto
+            required:
+              - id_prod
+              - quantity
+      example:
+        _id: shdaohqd5456463
+        products:
+          - id_prod: "60d21b126f675e15a44e1e48"
+            quantity: 2

@@ -40,13 +40,6 @@ paths:
       summary: Crear un nuevo producto
       security:
         - jwt: []
-      parameters:
-        - in: header
-          name: Authorization
-          schema:
-            type: string
-          required: true
-          description: Token JWT
       requestBody:
         required: true
         content:
@@ -98,12 +91,6 @@ paths:
             type: string
           required: true
           description: ID del producto
-        - in: header
-          name: Authorization
-          schema:
-            type: string
-          required: true
-          description: Token JWT
       requestBody:
         required: true
         content:
@@ -130,12 +117,6 @@ paths:
             type: string
           required: true
           description: ID del producto
-        - in: header
-          name: Authorization
-          schema:
-            type: string
-          required: true
-          description: Token JWT
       responses:
         "200":
           description: Producto eliminado
@@ -143,58 +124,19 @@ paths:
           description: Producto no encontrado
         "400":
           description: Error en eliminar producto
-  /api/carts/{cid}/products/{pid}:
-    post:
-      summary: Agregar un producto al carrito
-      security:
-        - jwt: []
-      parameters:
-        - in: path
-          name: cid
-          schema:
-            type: string
-          required: true
-          description: ID del carrito
-        - in: path
-          name: pid
-          schema:
-            type: string
-          required: true
-          description: ID del producto
-        - in: header
-          name: Authorization
-          schema:
-            type: string
-          required: false
-          description: Token JWT
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                quantity:
-                  type: integer
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Cart"
-        "404":
-          description: Carrito no encontrado
-        "400":
-          description: Error en agregar producto al carrito
-
 components:
+  securitySchemes:
+    jwt:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Product:
       type: object
       properties:
         _id:
-          type: string
+          type: ObjectID
           description: ID del producto
         title:
           type: string
@@ -236,7 +178,7 @@ components:
       type: object
       properties:
         _id:
-          type: string
+          type: ObjectID
           description: ID del carrito
         products:
           type: array

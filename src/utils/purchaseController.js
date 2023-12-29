@@ -1,7 +1,6 @@
 import CartManager from "../dao/managers_mongo/cartManagerMongo.js";
 import ProductManager from "../dao/managers_mongo/productManagerMongo.js";
 import { ticketModel } from "../dao/models/ticket.models.js";
-import { userModel } from "../dao/models/users.models.js";
 
 const cartManager = new CartManager();
 const productManager = new ProductManager();

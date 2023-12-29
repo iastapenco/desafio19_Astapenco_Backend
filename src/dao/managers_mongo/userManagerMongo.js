@@ -13,6 +13,11 @@ class UserManager {
     return user;
   }
 
+  async findUserByEmail(email) {
+    const user = await userModel.findOne({ email });
+    return user;
+  }
+
   //Método para crear un usuario
   async createUser(first_name, last_name, age, email, password) {
     const newUser = await userModel.create({

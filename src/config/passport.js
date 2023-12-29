@@ -12,7 +12,9 @@ const ExtractJWT = jwt.ExtractJwt;
 
 const initalizePassport = () => {
   const cookieExtractor = (req) => {
-    const token = req.cookies.jwtCookie ? req.cookies.jwtCookie : {};
+    const token = req.cookies.jwtCookie
+      ? req.cookies.jwtCookie
+      : req.headers.authorization.split(" ")[1];
 
     console.log("cookieExtractor", token);
 

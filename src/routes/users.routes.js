@@ -7,24 +7,36 @@ const userRouter = Router();
 const recoveryLinks = {};
 const userManager = new UserManager();
 
-userRouter.post("/password-recovery", (req, res) => {
+userRouter.post("/password-recovery", async (req, res) => {
   const { email } = req.body;
 
-  try {
-    const token = crypto.randomBytes(20).toString("hex");
+  if (email) {
+    const emailValid = await userManager.findUserByEmail(email);
 
-    recoveryLinks[token] = {
-      email: email,
-      timestamp: Date.now(),
-    };
+    if (emailValid) {
+      try {
+        const token = crypto.randomBytes(20).toString("hex");
 
-    const recoveryLink = `http://localhost:8080/api/users/reset-password/${token}`;
+        recoveryLinks[token] = {
+          email: email,
+          timestamp: Date.now(),
+        };
 
-    sendRecoveryMail(email, recoveryLink);
+        const recoveryLink = `http://localhost:8080/api/users/reset-password/${token}`;
 
-    res.status(200).send("Correo de recuperación enviado");
-  } catch (error) {
-    res.status(500).send(`Error al enviar el mail ${error}`);
+        sendRecoveryMail(email, recoveryLink);
+
+        res.status(200).send("Correo de recuperación enviado");
+      } catch (error) {
+        res.status(500).send(`Error al enviar el mail ${error}`);
+      }
+    } else {
+      res
+        .status(404)
+        .send({ mensaje: "El email ingresado no está registrado" });
+    }
+  } else {
+    res.status(400).send({ mensaje: "El campo email es obligatorio" });
   }
 });
 
@@ -32,23 +44,29 @@ userRouter.post("/reset-password/:token", (req, res) => {
   const { token } = req.params;
   const { newPassword, newPassword2 } = req.body;
 
-  try {
-    const linkData = recoveryLinks[token];
-    if (linkData && Date.now() - linkData.timestamp <= 3600000) {
-      const { email } = linkData;
+  if (newPassword && newPassword2) {
+    try {
+      const linkData = recoveryLinks[token];
+      if (linkData && Date.now() - linkData.timestamp <= 3600000) {
+        const { email } = linkData;
 
-      if (newPassword == newPassword2) {
-        delete recoveryLinks[token];
+        if (newPassword == newPassword2) {
+          delete recoveryLinks[token];
 
-        res.status(200).send("Contraseña modificada correctamente");
+          res.status(200).send("Contraseña modificada correctamente");
+        } else {
+          res.status(400).send("Las contraseñas deben ser idénticas");
+        }
       } else {
-        res.status(400).send("Las contraseñas deben ser idénticas");
+        res.status(400).send("Token inválido o expirado");
       }
-    } else {
-      res.status(400).send("Token inválido o expirado");
+    } catch (error) {
+      res.status(500).send(`Error al modificar contraseña ${error}`);
     }
-  } catch (error) {
-    res.status(500).send(`Error al modificar contraseña ${error}`);
+  } else {
+    res
+      .status(400)
+      .send({ mensaje: "Debe ingresar y confirmar nueva contraseña" });
   }
 });
 
